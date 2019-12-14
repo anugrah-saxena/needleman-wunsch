@@ -70,8 +70,7 @@ Example usage 2:
 
   // Use the aligned sequence values as required instead
   echo "Base Sequence: " . $result[0] . "<br>";
-  echo "Query Sequence: " . $seq1 . "<br>";
-  echo "Aligned Query Sequence: " . $result[1];
+  echo "Query Sequence: " . $result[1];
   ?>
 
 
