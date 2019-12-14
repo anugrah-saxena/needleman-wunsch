@@ -73,6 +73,10 @@ Example usage 2:
   echo "Query Sequence: " . $result[1];
   ?>
 
+Example output:
+
+Base Sequence: ACAGTCGAACG
+Query Sequence: ACCGTC---CG
 
 AUTHOR
 
