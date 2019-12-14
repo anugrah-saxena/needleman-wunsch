@@ -13,7 +13,9 @@ USAGE
 
 This code was written for educational purposes to demonstrate how the algorithm
 works. It is not intended for use in real sequence alignment or use with very
-large sequences. Example usage:
+large sequences.
+
+Example usage 1:
  
   <?php
 
@@ -52,11 +54,34 @@ A C C G T C - - - C G
 | |   | | |       | |
 A C A G T C G A A C G
 
+Example usage 2:
+
+  <?php
+  require_once('needleman-wunsch-class.php');
+  $match = 1;
+  $mismatch = -1;
+  $gap_penalty = -2;
+
+  $nw = new NeedlemanWunsch($match, $mismatch, $gap_penalty);
+  $seq1 = 'ACAGTCGAACG';
+  $seq2 = 'ACCGTCCG';
+
+  $result = $nw->alignSequences($seq1, $seq2);
+
+  // Use the aligned sequence values as required instead
+  echo "Base Sequence: " . $result[0] . "<br>";
+  echo "Query Sequence: " . $seq1 . "<br>";
+  echo "Aligned Query Sequence: " . $result[1];
+  ?>
+
 
 AUTHOR
 
 Andrew E. Bruno <aeb@qnot.org>
 
+MODIFIED BY
+
+Anugrah Saxena <anugrahsaxenamnit@gmail.com>
 
 REFERENCES
 

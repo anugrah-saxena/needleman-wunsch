@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 /**
  * This class implements the Needleman-Wunsch global alignment algorithm and
  * was created for educational purposes to demonstrate how the algorithm works.
@@ -28,14 +27,11 @@ class NeedlemanWunsch {
     private static $arrow_up = '&#8593;';
     private static $arrow_left = '&#8592;';
     private static $arrow_nw = '&#8598;';
-
     private $match_score = 1;
     private $mismatch_score = 0;
     private $gap_penalty = -1;
-
     private $matrix = array();
     private $optimal_alignment = array();
-
     /**
      * Constructor
      */
@@ -44,14 +40,12 @@ class NeedlemanWunsch {
         $this->mismatch_score = $mismatch_score;
         $this->gap_penalty = $gap_penalty;
     }
-
     /**
      * Computes the Needleman-Wunsch global alignment and returns a data structure
      * representing the alignment table.
      */
     public function compute($seq1, $seq2) {
         $this->init($seq1, $seq2);
-
         for($i = 1; $i < count($this->matrix); $i++) {
             for($j = 1; $j < count($this->matrix[$i]); $j++) {
                 $match_mismatch = ($seq1[$i-1] === $seq2[$j-1]) ? $this->match_score : $this->mismatch_score;
@@ -65,28 +59,21 @@ class NeedlemanWunsch {
                 } else if($max === $vgap) {
                     $pointer = self::$arrow_left;
                 }
-
                 $this->matrix[$i][$j]['pointer'] = $pointer;
                 $this->matrix[$i][$j]['val'] = $max;
             }
         }
-
-
         $i = count($this->matrix)-1;
         $j = count($this->matrix[0])-1;
-
         $this->optimal_alignment['seq1'] = array();
         $this->optimal_alignment['seq2'] = array();
         $this->optimal_alignment['aln'] = array();
         $this->optimal_alignment['score'] = $this->matrix[$i][$j]['val'];
-
         while($i !== 0 and $j !== 0) {
             $base1 = $seq1[$i-1];
             $base2 = $seq2[$j-1];
             $this->matrix[$i][$j]['trace'] = true;
             $pointer = $this->matrix[$i][$j]['pointer'];
-
-
             if($pointer === self::$arrow_nw) {
                 $i--;
                 $j--;
@@ -107,27 +94,22 @@ class NeedlemanWunsch {
                 die("Invalid pointer: $i,$j");
             }
         }
-
         foreach(array('seq1', 'seq2', 'aln') as $k) {
             $this->optimal_alignment[$k] = array_reverse($this->optimal_alignment[$k]);
         }
-
         return $this->matrix;
     }
-
     /**
      * Returns the optimal alignment data structure
      */
     public function getOptimalGlobalAlignment() {
         return $this->optimal_alignment;
     }
-
     /**
      * Computes the Needleman-Wunsch global alignment and displays the results in HTML.
      */
     public function renderAsHTML($seq1, $seq2, $full_page=true) {
         $this->compute($seq1, $seq2);
-
         if($full_page) { 
             echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
             echo '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head>';
@@ -159,7 +141,6 @@ class NeedlemanWunsch {
             } else  {
                 echo '<td>&nbsp;</td>';
             }
-
             foreach($this->matrix[$i] as $r) {
                 $str = '<td';
                 $str .= $r['trace'] ? ' class="trace">' : '>';
@@ -183,18 +164,14 @@ class NeedlemanWunsch {
             echo '</tr>';
         }
         echo "\n</table>";
-
         if($full_page) echo '</body></html>';
     }
-
     /**
      * Computes the Needleman-Wunsch global alignment and displays the results in ASCII.
      */
     public function renderAsASCII($seq1, $seq2) {
         $this->compute($seq1, $seq2);
-
         echo "Alignment Score Table\n\n";
-
         $char_array = array();
         for($i = 0; $i < strlen($seq2); $i++) {
             $char_array[] = '   '.$seq2[$i];
@@ -207,7 +184,6 @@ class NeedlemanWunsch {
                 echo ' ';
             }
             echo "\t";
-
             $char_array = array();
             foreach($this->matrix[$i] as $r) {
                 $str = ($r['pointer'] !== null) ? html_entity_decode($r['pointer'], ENT_QUOTES, 'UTF-8') : ' ';
@@ -219,13 +195,21 @@ class NeedlemanWunsch {
             echo implode("\t", $char_array);
             echo "\n";
         }
-
         echo "\nOptimal Global Alignment (score = ".$this->optimal_alignment['score'].")\n";
         foreach(array('seq2', 'aln', 'seq1') as $k) {
             echo implode(' ', $this->optimal_alignment[$k])."\n";
-        }
+	}
     }
-
+    /**
+     * Computes the Needleman-Wunsch global alignment and returns the aligned sequences for further processing.
+     */
+    public function alignSequences($seq1, $seq2) {
+        $this->compute($seq1, $seq2);
+	$result = array();
+	$result["seq1"] = implode('', $this->optimal_alignment['seq1']);
+	$result["seq2"] = implode('', $this->optimal_alignment['seq2']);
+	return [$result["seq1"], $result["seq2"]];
+        }
     /**
      * Initialization
      */
@@ -241,15 +225,12 @@ class NeedlemanWunsch {
                 );
             }
         }
-
         for($i = 0; $i < strlen($seq1); $i++) {
             $this->matrix[$i+1][0]['val'] = ($i+1) * $this->gap_penalty;
         }
-
         for($j = 0; $j < strlen($seq2); $j++) {
             $this->matrix[0][$j+1]['val'] = ($j+1) * $this->gap_penalty;
         }
     }
 }
-
 ?>
